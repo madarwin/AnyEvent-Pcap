@@ -38,20 +38,21 @@ AnyEvent::Pcap::Utils - Utilty class for AnyEvent::Pcap.
 
 =head1 SYNOPSIS
 
-  my $a_pcap = AnyEvent::Pcap->new(
+  my $a_pcap;
+  $a_pcap = AnyEvent::Pcap->new(
       device         => "eth0",
       filter         => "tcp port 80",
       packet_handler => sub {
-      	  my $header = shift;
-		  my $packet = shift;
-
-		  # you can use utils to get an NetPacket::TCP object.
+          my $header = shift;
+          my $packet = shift;
+  
+          # you can use utils to get an NetPacket::TCP object.
           my $tcp = $a_pcap->utils->extract_tcp_packet($packet);
-
-		  # and you can get an IP packet, too.
+  
+          # and you can get an IP packet, too.
           my $ip = $a_pcap->utils->extract_ip_packet($packet);
-
-		  # do something....
+  
+          # do something....
       }
   );
 	
