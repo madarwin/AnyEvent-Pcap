@@ -15,7 +15,7 @@
         my $class = shift;
         my $self = bless {@_}, $class;
         $self->utils( AnyEvent::Pcap::Utils->new );
-        $self->{_do_lookupnet} = 0;  # allow skipping lookupnet for ethernet only interfaces.
+        $self->{_do_lookupnet} = 1;  # allow skipping lookupnet for ethernet only interfaces.
         return $self;
     }
     
