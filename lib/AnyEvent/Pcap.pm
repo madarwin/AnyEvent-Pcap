@@ -15,6 +15,7 @@
         my $class = shift;
         my $self = bless {@_}, $class;
         $self->utils( AnyEvent::Pcap::Utils->new );
+        $self->{_do_lookupnet} = 0;  # allow skipping lookupnet for ethernet only interfaces.
         return $self;
     }
     
@@ -39,7 +40,7 @@
             my $fd = Net::Pcap::pcap_file($pcap);
             $self->fd($fd);
         } else {
-            if ($Net::Pcap::VERSION < 0.15) {
+            if ($Net::Pcap::VERSION >= 0.15) {
                 # open the device
                 $pcap = Net::Pcap::pcap_create($device,\$err);
                 croak $err if $err;
@@ -55,8 +56,10 @@
         }
         
         my ( $address, $netmask );
-        Net::Pcap::lookupnet( $device, \$address, \$netmask, \$err );
-        croak $err if $err;
+        if ($self->{_do_lookupnet}) {
+            Net::Pcap::lookupnet( $device, \$address, \$netmask, \$err );
+            croak $err if $err;
+        }
     
         my $filter;
         my $filter_string = $self->filter || sub {
