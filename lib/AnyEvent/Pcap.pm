@@ -59,6 +59,8 @@
         if ($self->{_do_lookupnet}) {
             Net::Pcap::lookupnet( $device, \$address, \$netmask, \$err );
             croak $err if $err;
+        } else {
+            $netmask = 0;
         }
     
         my $filter;
