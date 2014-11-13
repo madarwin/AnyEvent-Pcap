@@ -79,6 +79,7 @@
         my $self = shift;
     
         my $pcap = $self->_setup_pcap();
+        my $empty = { len => 0, caplen => 0, tv_sec => 0, tv_usec => 0 };
     
         my $packet_handler = $self->packet_handler || sub {
             $self->packet_handler( sub { } );
@@ -90,17 +91,17 @@
             fh   => $self->fd,
             poll => 'r',
             cb   => sub {
-                my @pending;
+                my @args;
                 Net::Pcap::dispatch(
-                    $pcap, -1,
+                    $pcap, 1,
                     sub {
                         my $header = $_[1];
                         my $packet = $_[2];
                         push @{ $_[0] }, ( $header, $packet );
                     },
-                    \@pending
+                    \@args
                 );
-                $packet_handler->( @pending, $io );
+                $packet_handler->( $args[0]||$empty, $args[1]||"", $io );
             }
         );
     }
