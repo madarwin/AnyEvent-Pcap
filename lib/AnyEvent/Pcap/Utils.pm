@@ -4,6 +4,7 @@ use warnings;
 use NetPacket::Ethernet;
 use NetPacket::IP;
 use NetPacket::TCP;
+use NetPacket::UDP;
 
 sub new {
     my $class = shift;
@@ -27,6 +28,16 @@ sub extract_tcp_packet {
     my $raw_tcp    = substr( $ip->{data}, 0, $ip->{len} - ( $ip->{hlen} * 4 ) );
     my $tcp        = NetPacket::TCP->decode($raw_tcp);
     return $tcp;
+}
+
+sub extract_udp_packet {
+    my $self       = shift;
+    my $raw_packet = shift;
+    my $raw_ip     = NetPacket::Ethernet->decode($raw_packet)->{data};
+    my $ip         = NetPacket::IP->decode($raw_ip);
+    my $raw_udp    = substr( $ip->{data}, 0, $ip->{len} - ( $ip->{hlen} * 4 ) );
+    my $udp        = NetPacket::UDP->decode($raw_udp);
+    return $udp;
 }
 
 1;
